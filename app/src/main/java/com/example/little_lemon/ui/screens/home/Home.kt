@@ -18,7 +18,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,8 +43,10 @@ fun Home(
     navHostController: NavHostController,
     menuLiveData: State<List<MenuEntity?>?>?
 ) {
-    var searchResults: List<MenuEntity?>? by remember{ mutableStateOf(null) }
-    searchResults = menuLiveData?.value
+    var searchResults: List<MenuEntity?>? by remember(key1 = menuLiveData?.value){
+        mutableStateOf(menuLiveData?.value)
+    }
+
 
     Column {
         Header(navHostController = navHostController)
