@@ -17,36 +17,38 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.little_lemon.R
 import com.example.little_lemon.data.MenuEntity
 import com.example.little_lemon.nav.Destinations
+import com.example.little_lemon.MenuViewModel
 import com.example.little_lemon.ui.screens.UIUtil.Logo.LemonLogo
 import com.example.little_lemon.ui.theme.Custom_Light_Green
 
 
 @Composable
 fun Home(
-    navHostController: NavHostController,
-    menuLiveData: State<List<MenuEntity?>?>?
+    navHostController: NavHostController
 ) {
-    var searchResults: List<MenuEntity?>? by remember(key1 = menuLiveData?.value){
-        mutableStateOf(menuLiveData?.value)
-    }
 
+    val menuViewModel: MenuViewModel = viewModel()
+    val menuStateValue = menuViewModel.menuItems.observeAsState().value
+    var menuList by remember(key1 = menuStateValue) {
+        mutableStateOf(menuStateValue)
+    }
 
     Column {
         Header(navHostController = navHostController)
@@ -59,7 +61,7 @@ fun Home(
             CardContents()
             SearchBar {
                 run {
-                    searchResults = searchByName(it, menuLiveData)
+                    menuList = search(it, { m-> m?.title}, menuStateValue)
                 }
             }
         }
@@ -71,7 +73,7 @@ fun Home(
             categories.forEach { category ->
                 CategoryButton(categoryName = category) {
                     run {
-                        searchResults = searchByCategory(category, menuLiveData)
+                        menuList = search(category, { m-> m?.category}, menuStateValue)
                     }
                 }
             }
@@ -80,8 +82,8 @@ fun Home(
         Spacer(modifier = Modifier.height(20.dp))
 
         LazyColumn(modifier = Modifier.fillMaxHeight()) {
-            if (searchResults != null) {
-                items(searchResults!!.toList()) {
+            if (menuList != null) {
+                items(menuList!!.toList()) {
                     it?.let { it1 -> MealCard(menuEntity = it1) }
                 }
             }
@@ -90,22 +92,13 @@ fun Home(
     }
 }
 
-
-fun searchByName(
+fun search(
     searchPhrase: String,
-    menuItems: State<List<MenuEntity?>?>?
+    attribute: (MenuEntity?) -> String?,
+    menuItems: List<MenuEntity?>?
 ): List<MenuEntity?>? {
-    return menuItems?.value?.filter {
-        it?.title?.contains(searchPhrase, ignoreCase = true) == true
-    }
-}
-
-fun searchByCategory(
-    searchPhrase: String,
-    menuItems: State<List<MenuEntity?>?>?
-): List<MenuEntity?>? {
-    return menuItems?.value?.filter {
-        it?.category?.contains(searchPhrase, ignoreCase = true) == true
+    return menuItems?.filter {
+        attribute(it)?.contains(searchPhrase, ignoreCase = true) ?: true
     }
 }
 
