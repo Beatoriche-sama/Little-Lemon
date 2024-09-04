@@ -1,7 +1,7 @@
 This is a mobile food ordering app. 
 
 Registration Page will welcome new customer and ask to create an account.
-![registration](https://github.com/user-attachments/assets/faae7de0-6585-4639-9a0e-50cf955a3d17)
+![registration](https://github.com/user-attachments/assets/faae7de0-6585-4639-9a0e-50cf955a3d17 = 400x400)
 
 Registered user can browse Little Lemon Menu and choose a meal. User can find a meal by name or category.
 ![home_page](https://github.com/user-attachments/assets/b370e7ba-adf1-4cb1-aebb-38939a74b798)
