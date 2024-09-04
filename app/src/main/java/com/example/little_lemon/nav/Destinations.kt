@@ -15,4 +15,12 @@ interface Destinations {
         override val path = "Profile"
     }
 
+    object PurchaseItem : Destinations{
+        override val path = "MealCard"
+    }
+
+    object Cart : Destinations{
+        override val path = "Cart"
+    }
+
 }

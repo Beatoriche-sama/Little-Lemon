@@ -1,6 +1,7 @@
 package com.example.little_lemon
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -22,8 +23,11 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class MenuViewModel(application: Application) : AndroidViewModel(application) {
+
     private val database: Database? = Database.getInstance(application)
     var menuItems: LiveData<List<MenuEntity?>?> = database?.getAllMenuItems()!!
+    var clickedMeal : MenuEntity? = null
+    var cartItems = mutableStateListOf<MenuEntity>()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
