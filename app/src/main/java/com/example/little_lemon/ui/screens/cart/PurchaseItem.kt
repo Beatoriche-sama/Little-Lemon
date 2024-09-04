@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -24,10 +25,11 @@ fun PurchaseItem(navController: NavController, menuViewModel: MenuViewModel) {
 
     val meal = menuViewModel.clickedMeal
 
-    Column {
-
-        Spacer(modifier = Modifier.padding(0.dp, 20.dp))
-
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         meal?.let { MealCard(it) }
 
         Spacer(modifier = Modifier.padding(20.dp, 10.dp))
@@ -58,5 +60,6 @@ fun PurchaseItem(navController: NavController, menuViewModel: MenuViewModel) {
         }
 
     }
+
 
 }
