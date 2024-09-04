@@ -24,40 +24,29 @@ import com.example.little_lemon.data.MenuEntity
 fun MealCard(
     menuEntity: MenuEntity
 ) {
-    /*Card(
-        shape = RectangleShape,
-        border = BorderStroke(2.dp, Custom_Green),
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black
-        ),
-        onClick = { onClick?.let { it() } }
-    ) {*/
-        Row {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(5.dp, 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = menuEntity.title,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = menuEntity.description,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "$ ${menuEntity.price}",
-                    textAlign = TextAlign.Center
-                )
-            }
-            Spacer(modifier = Modifier.width(50.dp))
-            MealIcon(url = menuEntity.image)
+    Row {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .padding(5.dp, 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = menuEntity.title,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = menuEntity.description,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "$ ${menuEntity.price}",
+                textAlign = TextAlign.Center
+            )
         }
-    //}
+        Spacer(modifier = Modifier.width(50.dp))
+        MealIcon(url = menuEntity.image)
+    }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)

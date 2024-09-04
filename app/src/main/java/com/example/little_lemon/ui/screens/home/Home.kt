@@ -84,7 +84,8 @@ fun HomeContent(
             CardContents()
             SearchBar {
                 run {
-                    menuList = search(it, { m -> m?.title }, menuStateValue)
+                    menuList = if (it.isEmpty()) menuStateValue
+                    else search(it, { m -> m?.title }, menuStateValue)
                 }
             }
         }
