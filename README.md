@@ -3,7 +3,7 @@ This is a mobile food ordering app.
 Registration Page will welcome new customer and ask to create an account.
 
 <img src="https://github.com/user-attachments/assets/faae7de0-6585-4639-9a0e-50cf955a3d17" width="300" height="700" />
-
+___
 
 Registered user can browse Little Lemon Menu and choose a meal. 
 User can find a meal by name or category. 
@@ -23,4 +23,5 @@ Inside Cart user can remove meal from their list or continue shopping in Home Pa
 
 
 Additionally Profile Data is available by clicking on profile icon in Home Page
+
 <img src="https://github.com/user-attachments/assets/75dcc11d-4949-4021-a4a6-792010699ab2" width="300" height="700" />
