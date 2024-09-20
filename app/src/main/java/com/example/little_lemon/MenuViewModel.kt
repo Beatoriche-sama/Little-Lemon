@@ -1,9 +1,9 @@
 package com.example.little_lemon
 
-import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.little_lemon.data.Database
 import com.example.little_lemon.data.MenuEntity
@@ -19,12 +19,11 @@ import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-class MenuViewModel(application: Application) : AndroidViewModel(application) {
+class MenuViewModel(context: Context) : ViewModel() {
 
-    private val database: Database? = Database.getInstance(application)
+    private val database: Database? = Database.getInstance(context)
     var menuItems: LiveData<List<MenuEntity?>?> = database?.getAllMenuItems()!!
     var clickedMeal : MenuEntity? = null
     var cartItems = mutableStateListOf<MenuEntity>()
