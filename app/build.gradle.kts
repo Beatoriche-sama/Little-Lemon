@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 
+    id("com.google.dagger.hilt.android")
     id ("kotlin-kapt")
     id ("org.jetbrains.kotlin.plugin.serialization")
 }
@@ -52,21 +54,30 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
+    //Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
+
     implementation(libs.androidx.navigation.compose)
     implementation (libs.androidx.fragment)
+    implementation(libs.material3)
+    implementation (libs.compose)
+    implementation(libs.androidx.runtime.livedata)
 
+    //Ktor
     implementation (libs.ktor.client.android)
     implementation (libs.ktor.client.content.negotiation)
     implementation (libs.ktor.serialization.kotlinx.json)
 
+    //Room
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
-
-    implementation(libs.material3)
-    implementation (libs.compose)
-
-    implementation(libs.androidx.runtime.livedata)
 
 
     implementation(libs.androidx.core.ktx)

@@ -7,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.example.little_lemon.ui.theme.Custom_Light_Green
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(onSearch: (s: String) -> Unit) {
     var searchPhrase by remember { mutableStateOf("") }
@@ -42,8 +40,9 @@ fun SearchBar(onSearch: (s: String) -> Unit) {
                 contentDescription = null
             )
         },
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.White
+        colors = TextFieldDefaults.colors(
+            unfocusedContainerColor = Color.LightGray,
+            focusedContainerColor = Color.White
         ),
         placeholder = {
             Text(

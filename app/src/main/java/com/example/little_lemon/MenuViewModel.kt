@@ -1,13 +1,13 @@
 package com.example.little_lemon
 
-import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.little_lemon.data.Database
+import com.example.little_lemon.data.MenuDao
 import com.example.little_lemon.data.MenuEntity
 import com.example.little_lemon.network.Network
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -20,28 +20,25 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-class MenuViewModel(context: Context) : ViewModel() {
-
-    private val database: Database? = Database.getInstance(context)
-    var menuItems: LiveData<List<MenuEntity?>?> = database?.getAllMenuItems()!!
-    var clickedMeal : MenuEntity? = null
+@HiltViewModel
+class MenuViewModel @Inject constructor(
+    private val menuDao: MenuDao
+) : ViewModel() {
+    var menuItems: LiveData<List<MenuEntity?>?> = menuDao.getAllMenuItems()!!
+    var clickedMeal: MenuEntity? = null
     var cartItems = mutableStateListOf<MenuEntity>()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            populateMenuData()
-        }
-    }
-
-    private suspend fun populateMenuData() {
-        database?.clearAllData()
-
-        val menuNetworkItems = fetchMenuItems()
-        menuNetworkItems.forEach { menuNetworkItem ->
-            database?.insert(
-                MenuEntity.menuItemNetworkToMenuEntity(menuNetworkItem)
-            )
+            menuDao.deleteAll()
+            val menuNetworkItems = fetchMenuItems()
+            menuNetworkItems.forEach { menuNetworkItem ->
+                menuDao.insert(
+                    MenuEntity.menuItemNetworkToMenuEntity(menuNetworkItem)
+                )
+            }
         }
     }
 

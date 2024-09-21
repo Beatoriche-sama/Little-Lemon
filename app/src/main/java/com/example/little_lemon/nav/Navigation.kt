@@ -2,7 +2,7 @@ package com.example.little_lemon.nav
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,7 +26,7 @@ fun Navigation(
     val startDest: String = if (PrefManager(context).isDataRegistered())
         homePath else registrationPath
 
-    val menuViewModel: MenuViewModel = viewModel()
+    val menuViewModel: MenuViewModel = hiltViewModel()
 
     NavHost(navController = navController, startDestination = startDest) {
 
