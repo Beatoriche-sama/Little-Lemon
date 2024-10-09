@@ -1,4 +1,4 @@
-package com.example.little_lemon.ui.screens.home
+package com.example.little_lemon.presentation.screens.home
 
 
 import android.annotation.SuppressLint
@@ -32,49 +32,56 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.example.little_lemon.MenuViewModel
 import com.example.little_lemon.R
 import com.example.little_lemon.data.MenuEntity
-import com.example.little_lemon.nav.Destinations
-import com.example.little_lemon.ui.screens.UIUtil.Logo.LemonLogo
-import com.example.little_lemon.ui.theme.Custom_Green
-import com.example.little_lemon.ui.theme.Custom_Light_Green
-import com.example.little_lemon.ui.theme.Custom_Pink
+import com.example.little_lemon.presentation.MenuViewModel
+import com.example.little_lemon.presentation.common.CardContents
+import com.example.little_lemon.presentation.common.CategoryButton
+import com.example.little_lemon.presentation.common.LemonLogo
+import com.example.little_lemon.presentation.common.MealCard
+import com.example.little_lemon.presentation.common.SearchBar
+import com.example.little_lemon.presentation.theme.Corn_Silk
+import com.example.little_lemon.presentation.theme.Custom_Green
+import com.example.little_lemon.presentation.theme.Custom_Light_Green
+import com.example.little_lemon.presentation.theme.Custom_Pink
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun Home(
-    navController: NavHostController,
-    menuViewModel: MenuViewModel
+    viewModel: MenuViewModel,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToPurchaseItem: () -> Unit,
+    onNavigateToCart: () -> Unit
 ) {
 
     Scaffold(
         topBar = {},
-        bottomBar = {
-            CartButton(
-                navController = navController
+        bottomBar = { CartButton(onClick = onNavigateToCart) },
+        content = {
+            HomeContent(
+                viewModel = viewModel,
+                onNavigateToProfile = onNavigateToProfile,
+                onNavigateToPurchaseItem = onNavigateToPurchaseItem
             )
         }
-    ) {
-        HomeContent(navController = navController, menuViewModel = menuViewModel)
-    }
+    )
 
 }
 
 @Composable
-fun HomeContent(
-    navController: NavHostController,
-    menuViewModel: MenuViewModel
+private fun HomeContent(
+    viewModel: MenuViewModel,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToPurchaseItem: () -> Unit
 ) {
-    val menuStateValue = menuViewModel.menuItems.observeAsState().value
+    val menuStateValue = viewModel.menuItems.observeAsState().value
     var menuList by remember(key1 = menuStateValue) {
         mutableStateOf(menuStateValue)
     }
 
     Column {
-        Header(navHostController = navController)
+        Header(onNavigateToProfile = onNavigateToProfile)
 
         Card(
             colors = CardDefaults.cardColors(
@@ -82,12 +89,13 @@ fun HomeContent(
             )
         ) {
             CardContents()
-            SearchBar {
-                run {
-                    menuList = if (it.isEmpty()) menuStateValue
-                    else search(it, { m -> m?.title }, menuStateValue)
-                }
-            }
+            SearchBar(onSearch = {
+                menuList =
+                    if (it.isEmpty())
+                        menuStateValue
+                    else
+                        filterMenuItems(it, { m -> m?.title }, menuStateValue)
+            })
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -95,38 +103,95 @@ fun HomeContent(
         val categories = arrayOf("starters", "desserts", "mains", "drinks")
         Row {
             categories.forEach { category ->
-                CategoryButton(categoryName = category) {
-                    run {
-                        menuList = search(category, { m -> m?.category }, menuStateValue)
-                    }
-                }
+                CategoryButton(categoryName = category, onSearch = {
+                    menuList = filterMenuItems(category, { m -> m?.category }, menuStateValue)
+                })
             }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         LazyColumn {
-            if (menuList != null) {
+            if (menuList != null)
                 items(menuList!!.toList()) {
-                    if (it != null) {
+                    if (it != null)
                         MenuItem(
                             menuEntity = it,
-                            navController = navController,
-                            menuViewModel
+                            onMenuItemClick = {
+                                viewModel.clickedMeal = it
+                                onNavigateToPurchaseItem()
+                            }
                         )
-                    }
                 }
-            }
         }
+
+    }
+}
+
+private fun filterMenuItems(
+    searchPhrase: String,
+    attribute: (MenuEntity?) -> String?,
+    menuItems: List<MenuEntity?>?
+): List<MenuEntity?>? {
+    return menuItems?.filter {
+        attribute(it)?.contains(searchPhrase, ignoreCase = true) ?: true
     }
 }
 
 @Composable
-fun CartButton(navController: NavHostController) {
+private fun MenuItem(
+    menuEntity: MenuEntity,
+    onMenuItemClick: () -> Unit,
+) {
+
+    Card(
+        shape = RectangleShape,
+        border = BorderStroke(2.dp, Custom_Green),
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Corn_Silk,
+            contentColor = Color.Black
+        ),
+        onClick = { onMenuItemClick() }
+    ) {
+        MealCard(menuEntity = menuEntity)
+    }
+}
+
+@Composable
+private fun Header(onNavigateToProfile: () -> Unit) {
+    Row(
+        modifier = Modifier.padding(0.dp, 20.dp)
+    ) {
+        LemonLogo(
+            modifier = Modifier
+                .weight(1f, true)
+                .height(90.dp)
+                .padding(top = 20.dp, bottom = 10.dp)
+        )
+
+        Button(
+            onClick = { onNavigateToProfile() },
+            content = {
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(70.dp)
+                        .clip(CircleShape)
+                )
+            },
+            elevation = null,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+        )
+    }
+}
+
+@Composable
+private fun CartButton(onClick: () -> Unit) {
     Button(
-        onClick = {
-            navController.navigate(Destinations.Cart.path)
-        },
+        onClick = { onClick() },
         content = {
             Image(
                 painter = painterResource(id = R.drawable.cart),
@@ -144,70 +209,6 @@ fun CartButton(navController: NavHostController) {
     )
 }
 
-@Composable
-fun MenuItem(
-    menuEntity: MenuEntity,
-    navController: NavHostController,
-    menuViewModel: MenuViewModel
-) {
-
-    Card(
-        shape = RectangleShape,
-        border = BorderStroke(2.dp, Custom_Green),
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black
-        ),
-        onClick = {
-            menuViewModel.clickedMeal = menuEntity
-            navController.navigate(Destinations.PurchaseItem.path)
-        }
-    ) {
-        MealCard(menuEntity = menuEntity)
-    }
-}
-
-fun search(
-    searchPhrase: String,
-    attribute: (MenuEntity?) -> String?,
-    menuItems: List<MenuEntity?>?
-): List<MenuEntity?>? {
-    return menuItems?.filter {
-        attribute(it)?.contains(searchPhrase, ignoreCase = true) ?: true
-    }
-}
-
-
-@Composable
-fun Header(navHostController: NavHostController) {
-    Row(
-        modifier = Modifier.padding(0.dp, 20.dp)
-    ) {
-        LemonLogo(
-            modifier = Modifier
-                .weight(1f, true)
-                .height(90.dp)
-                .padding(top = 20.dp, bottom = 10.dp)
-        )
-
-        Button(
-            onClick = { navHostController.navigate(Destinations.Profile.path) },
-            content = {
-                Image(
-                    painter = painterResource(id = R.drawable.profile),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(70.dp)
-                        .clip(CircleShape)
-                )
-            },
-            elevation = null,
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-        )
-    }
-}
 
 
 

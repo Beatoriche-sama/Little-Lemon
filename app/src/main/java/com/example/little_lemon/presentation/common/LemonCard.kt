@@ -1,4 +1,4 @@
-package com.example.little_lemon.ui.screens.home
+package com.example.little_lemon.presentation.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.little_lemon.R
-import com.example.little_lemon.ui.theme.Custom_Yellow
+import com.example.little_lemon.presentation.theme.Custom_Yellow
 
 @Composable
 fun CardContents() {

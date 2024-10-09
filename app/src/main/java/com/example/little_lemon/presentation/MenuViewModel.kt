@@ -1,11 +1,11 @@
-package com.example.little_lemon
+package com.example.little_lemon.presentation
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.little_lemon.data.MenuDao
 import com.example.little_lemon.data.MenuEntity
+import com.example.little_lemon.data.MenuRepository
 import com.example.little_lemon.network.Network
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
@@ -24,18 +24,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MenuViewModel @Inject constructor(
-    private val menuDao: MenuDao
+    private val menuRepository: MenuRepository
 ) : ViewModel() {
-    var menuItems: LiveData<List<MenuEntity?>?> = menuDao.getAllMenuItems()!!
+    var menuItems: LiveData<List<MenuEntity?>?> = menuRepository.getAllMenuItems()
     var clickedMeal: MenuEntity? = null
     var cartItems = mutableStateListOf<MenuEntity>()
 
+    private val menuDataUrl = "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/" +
+            "Working-With-Data-API/main/menu.json"
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            menuDao.deleteAll()
+            menuRepository.deleteAllMenuItems()
             val menuNetworkItems = fetchMenuItems()
             menuNetworkItems.forEach { menuNetworkItem ->
-                menuDao.insert(
+                menuRepository.insertMenuItem(
                     MenuEntity.menuItemNetworkToMenuEntity(menuNetworkItem)
                 )
             }
@@ -54,9 +57,7 @@ class MenuViewModel @Inject constructor(
             }
         }
 
-        val url = "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/" +
-                "Working-With-Data-API/main/menu.json"
-        val response: HttpResponse = client.get(url)
+        val response: HttpResponse = client.get(menuDataUrl)
         return decodeMenuItems(response)
     }
 

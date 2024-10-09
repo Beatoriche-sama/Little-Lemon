@@ -1,4 +1,4 @@
-package com.example.little_lemon.ui.theme
+package com.example.little_lemon.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -15,3 +15,8 @@ val Custom_Light_Green = Color(0xFF71807B)
 val Custom_Pink = Color(0xFFEE9972)
 val Custom_Yellow = Color(0xFFF4CE14)
 val Custom_Gray = Color(0xFFAFAFAF)
+val Vanilla = Color(0xFFF3E5AB)
+val Brown_Sugar = Color(0xFFE2A76f)
+val Corn_Silk = Color(0xFFFFF8DC)
+val Creamy_Corn = Color(0xFFFFF2C2)
+val Anise_Liquor = Color(0xFFEFEBBB)
